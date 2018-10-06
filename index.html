@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en" style=" background-image: url('img/fondo1.png'); background-repeat: no-repeat; background-size: cover;  background-position: center; ">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="hotsnackbar.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Jaldi" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link href="/styles.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-rc.2/css/materialize.min.css">
+
+    <!-- Compiled and minified JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-rc.2/js/materialize.min.js"></script>
+
+    <title>Ahorcado</title>
+    <div id="pista"></div>
+</head>
+
+<body>
+    <div class="container">
+        <div class="row">
+            <table>
+                <tr>
+                    <td>
+                        <div id="img" class="col s10">
+                        </div>
+                    </td>
+                    <td>
+                        <br>
+                        <br>
+                        <div id="alfabeto" class="col s6"></div>
+        </div>
+        </td>
+        </tr>
+        </table>
+    </div>
+    </div>
+    <br>
+
+    <div id="lineas" style="font-size: 3em; text-align: center;">
+    </div>
+    <script type="text/javascript" src="hotsnackbar.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    
+
+    <script>
+
+        var alfabeto = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"]
+        var lineas = []
+        var listaimgs = []
+        var imgs = ['img/palo1.png', '/img/cabeza1.png', 'img/cuerpo1.png', 'img/brazoizq1.png', 'img/brazodere1.png', 'img/piernaizq1.png', 'img/ahorcado1.png'];
+        var listaPalabras = ["HOLA", "AMARILLO", "PERRO", "CASA", "CARRO", "HOMBRE", "MUJER", "JAVASCRIPT", "KOTLIN"];
+        var listaPistas = ["SALUDO", "COLOR", "TIPO DE ANIMAL", "SINONIMO DE HOGAR", "TIPO DE TRANSPORTE", "SER HUMANO MASCULINO", "SER HUMANO FEMENINO", "LENGUAJE DEL CURSO", "LENGUAJE COMPATIBLE CON JAVA"];
+        var puntuacion = 0;
+        var objPalabraPista = {}
+        var x = 0;
+        var intentos = 0;
+        var palabraIngresada = ""
+
+        function clickOnGenerateWord() {
+            x = 0;
+            intentos = 0;
+            lineas = []
+            listaimgs = []
+            palabraIngresada = ""
+
+            $("#img").html('<img src="img/palo1.png" width="450px">');
+
+            $("#lineas").html(lineas)
+
+            let selectorRandom = Math.round(Math.random() * ((listaPalabras.length - 1) - 0) + 0);
+            objPalabraPista = { "palabra": listaPalabras[selectorRandom], "pista": listaPistas[selectorRandom] };
+            let longitudPalabra = objPalabraPista.palabra.length;
+
+            $("#pista").html('<h1> Pista: ' + objPalabraPista.pista + '</h1>')
+
+            for (var i = 0; i < longitudPalabra; i++) {
+                lineas.push('___ ');
+            }
+
+            $("#lineas").html(lineas)
+
+            console.log(objPalabraPista.palabra);
+        }
+
+
+        function validarPalabra(pos) {
+            var str = alfabeto[pos]
+            palabraIngresada = ""
+            $.each(listaimgs, function (i, l) {
+                $("#img").html('<img src="' + l + '" width="450px">');
+            });
+
+            if (intentos > 4) {
+                clickOnGenerateWord();
+                hotsnackbar('hserror', 'Lo sentimos has perdido!!');
+
+            }
+            if (objPalabraPista.palabra.indexOf(str) != -1) {
+
+                for (var i = 0; i < objPalabraPista.palabra.length; i++) {
+                    if (objPalabraPista.palabra.charAt(i) == str) {
+                        lineas[i] = lineas[i].replace('___ ', str)
+                    }
+                }
+
+                for (var i = 0; i < lineas.length; i++) {
+                    palabraIngresada = palabraIngresada + lineas[i];
+                }
+
+
+            }
+
+            else {
+                intentos = intentos + 1;
+                x = x + 1;
+                if (x < 7) listaimgs.push(imgs[x])
+            }
+
+            $("#lineas").html(lineas)
+
+            $.each(listaimgs, function (i, l) {
+                $("#img").html('<img src="' + l + '" width="450px" >');
+            });
+
+            if (objPalabraPista.palabra == palabraIngresada) {
+                $("#img").html('<img src="img/ganar1.png" width="450px" >');
+                hotsnackbar('hsdone', 'Felicitaciones has ganado!!');
+                clickOnGenerateWord()
+
+            }
+
+        }
+
+        clickOnGenerateWord();
+
+        $("#img").html('<img src="img/palo1.png" width="450px">');
+
+
+        $.each(alfabeto, function (i, l) {
+            $("#alfabeto").append('<button class="right-align" style="background-color:#32C8F7;color:#FFFFFF; font-size: 2em; width:1.6em;" onclick="validarPalabra(' + i + ')" >' + l + '</button>');
+        });
+
+
+
+    </script>
+
+</body>
+
+</html>
